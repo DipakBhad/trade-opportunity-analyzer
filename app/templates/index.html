@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Trade Analyzer</title>
+    <link rel="stylesheet" href="/static/style.css">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <h1>🚀 Trade Opportunity Analyzer</h1>
+
+        <div class="search-box">
+            <input type="text" id="sector" placeholder="Enter sector (e.g. technology)">
+            <button onclick="analyze()">Analyze</button>
+        </div>
+
+        <div id="output" class="card"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <script>
+        async function analyze() {
+            const sector = document.getElementById("sector").value;
+
+            document.getElementById("output").innerHTML = "⏳ Analyzing...";
+
+            const res = await fetch(`/analyze/${sector}`, {
+                headers: { "x-api-key": "mysecretkey" }
+            });
+
+            const data = await res.json();
+
+            if (data.status === "success") {
+                document.getElementById("output").innerHTML = marked.parse(data.analysis);
+            } else {
+                document.getElementById("output").innerHTML =
+                    "<h3>⚠️ AI Limit Reached</h3>" +
+                    "<p>Latest News:</p>" +
+                    "<ul>" + data.news.map(n => `<li>${n}</li>`).join("") + "</ul>";
+            }
+        }
+    </script>
+</body>
+</html>
